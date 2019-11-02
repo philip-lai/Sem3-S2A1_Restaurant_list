@@ -29,12 +29,15 @@ app.get('/restaurants/:restaurant_id', (req, res) => {
 
 app.get('/search', (req, res) => {
   const keyword = req.query.keyword
-  const restaurants = restaurantList.results.filter(restaurant => {
-    //fullinfo = restaurant.name + restaurant.name_en + restaurant.category + restaurant.location + restaurant.description
+  if (keyword.trim().length === 0) {
+    res.render('index', { restaurants: restaurantList.results })
+  } else {
+    const restaurants = restaurantList.results.filter(restaurant => {
+      return restaurant.name.toLowerCase().includes(keyword.toLowerCase()) || restaurant.name_en.toLowerCase().includes(keyword.toLowerCase()) || restaurant.category.toLowerCase().includes(keyword.toLowerCase()) || restaurant.location.toLowerCase().includes(keyword.toLowerCase()) || restaurant.description.toLowerCase().includes(keyword.toLowerCase())
+    })
+    res.render('index', { restaurants: restaurants, keyword: keyword })
+  }
 
-    return restaurant.name.toLowerCase().includes(keyword.toLowerCase()) || restaurant.name_en.toLowerCase().includes(keyword.toLowerCase()) || restaurant.category.toLowerCase().includes(keyword.toLowerCase()) || restaurant.location.toLowerCase().includes(keyword.toLowerCase()) || restaurant.description.toLowerCase().includes(keyword.toLowerCase())
-  })
-  res.render('index', { restaurants: restaurants, keyword: keyword })
 })
 
 // start and listen on the Express server
